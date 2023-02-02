@@ -1,0 +1,10 @@
+version: "3.2"
+
+services:
+  api:
+    build: .
+    environment:
+      - GOOGLE_AUTH_CLIENT_ID=${GOOGLE_AUTH_CLIENT_ID}
+      - GOOGLE_AUTH_CLIENT_SECRET=${GOOGLE_AUTH_CLIENT_SECRET}
+    ports:
+      - '3000:3000'
