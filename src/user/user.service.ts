@@ -11,11 +11,14 @@ export class UserService {
   ) {}
 
   getUser(email: string) {
-    return this.userRepository.findOne({ where: { email } });
+    return this.userRepository.findOne({
+      where: { email },
+      relations: { files: true },
+    });
   }
 
   async create({ email }: { email: string }) {
-    const user = await this.userRepository.create({ email });
+    const user = this.userRepository.create({ email });
 
     await this.userRepository.save(user);
 

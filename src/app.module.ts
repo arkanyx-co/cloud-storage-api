@@ -7,11 +7,13 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { join } from 'path';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
+    FilesModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -24,6 +26,11 @@ import { join } from 'path';
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DATABASE: Joi.string().required(),
+        MINIO_ENDPOINT: Joi.string().required(),
+        MINIO_PORT: Joi.number().required(),
+        MINIO_ACCESSKEY: Joi.string().required(),
+        MINIO_SECRETKEY: Joi.string().required(),
+        MINIO_BUCKET: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -41,7 +48,7 @@ import { join } from 'path';
 
         migrationsTableName: 'migration',
 
-        migrations: ['src/migrations/*.ts'],
+        migrations: [join(__dirname, 'src', 'migrations', '*.{ts,js}')],
 
         synchronize: process.env.NODE_ENV !== 'production',
       }),

@@ -1,5 +1,6 @@
-FROM node:latest
-WORKDIR app
+FROM node:hydrogen
+WORKDIR /app
+COPY ["package.json", "yarn.lock", "./"]
+RUN yarn
 COPY . .
-RUN npm i
-CMD npm run start:dev
+CMD yarn start:dev
