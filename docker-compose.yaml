@@ -89,6 +89,8 @@ services:
     depends_on:
       - db
       - nginx
+    volumes:
+      - ./:/app
 
 volumes:
   data1-1:

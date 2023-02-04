@@ -48,7 +48,7 @@ import { FilesModule } from './files/files.module';
 
         migrationsTableName: 'migration',
 
-        migrations: ['src/migrations/*.ts'],
+        migrations: [join(__dirname, 'src', 'migrations', '*.{ts,js}')],
 
         synchronize: process.env.NODE_ENV !== 'production',
       }),

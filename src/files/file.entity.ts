@@ -1,26 +1,26 @@
-import { FileEntity } from 'src/files/file.entity';
+import { UserEntity } from 'src/user/user.entity';
 import {
   PrimaryGeneratedColumn,
   Column,
   UpdateDateColumn,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
-export class UserEntity {
+export class FileEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', unique: true })
-  email: string;
+  @Column({ type: 'varchar' })
+  filename: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  refreshToken: string;
+  @Column({ type: 'varchar' })
+  bucket: string;
 
-  @OneToMany(() => FileEntity, (file) => file.user)
-  files: FileEntity[];
+  @ManyToOne(() => UserEntity, (user) => user.files)
+  user: UserEntity;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

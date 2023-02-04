@@ -22,10 +22,10 @@ export class StorageService {
     };
   }
 
-  public async upload(
+  public upload(
     file: Express.Multer.File,
     bucket: string = this.minioConfig.baseBucket,
-  ) {
+  ): Promise<{ filename: string; bucket: string }> {
     const temp_filename = Date.now().toString();
     const hashedFileName = crypto
       .createHash('md5')
@@ -39,42 +39,42 @@ export class StorageService {
       'Content-Type': file.mimetype,
     };
     const filename = hashedFileName + ext;
-    const fileName = `${filename}`;
-    const fileBuffer = file.buffer;
-    this.client.putObject(
-      bucket,
-      fileName,
-      fileBuffer,
-      metaData,
-      function (err, res) {
-        console.log(err, res);
-        if (err) {
-          throw new HttpException(
-            'Error uploading file',
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      },
-    );
+    return new Promise((res, rej) => {
+      this.client.putObject(
+        bucket,
+        filename,
+        file.buffer,
+        metaData,
+        function (err) {
+          if (err) {
+            return rej(
+              new HttpException('Error uploading file', HttpStatus.BAD_REQUEST),
+            );
+          }
 
-    const { endpoint, port } = this.minioConfig;
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-
-    return {
-      url: `${protocol}://${endpoint}:${port}/${bucket}/${filename}`,
-    };
+          res({
+            filename,
+            bucket,
+          });
+        },
+      );
+    });
   }
 
-  async delete(
-    objetName: string,
-    bucket: string = this.minioConfig.baseBucket,
-  ) {
-    this.client.removeObject(bucket, objetName, function (err, res) {
-      if (err)
-        throw new HttpException(
-          'Oops Something wrong happend',
-          HttpStatus.BAD_REQUEST,
-        );
+  delete(filename: string, bucket: string = this.minioConfig.baseBucket) {
+    return new Promise<void>((res, rej) => {
+      this.client.removeObject(bucket, filename, function (err) {
+        if (err) {
+          return rej(
+            new HttpException(
+              'Oops Something wrong happend',
+              HttpStatus.BAD_REQUEST,
+            ),
+          );
+        }
+
+        res();
+      });
     });
   }
 }
