@@ -1,5 +1,6 @@
 FROM node:latest
-WORKDIR app
+WORKDIR /app
+COPY ["package.json", "package-lock.json*", "./"]
+RUN npm install
 COPY . .
-RUN npm i
 CMD npm run start:dev
